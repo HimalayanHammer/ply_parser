@@ -5,3 +5,7 @@ data/*
 dist
 dist/*
 .idea/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/

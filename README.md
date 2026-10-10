@@ -2,7 +2,7 @@
 This Python module provides a simple PLY (Polygon File Format) file parser. It includes a class PLYObject for storing PLY file data and a function parse_ply_file for reading PLY files and creating PLYObject instances.
 
 ### Requirements
-`Python 3.11.x`
+`Python 3.8+`
 
 ### Installation
 ```
