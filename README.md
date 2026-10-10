@@ -20,11 +20,13 @@ The PLYObject class represents a PLY object with attributes:
 
 `faces`: List of face indices.
 
-`colors`: List of RGB color values for vertices.
+`colors`: List of RGB color values for vertices, as stored in the file (e.g. 0-255 for `uchar`). Empty if the file has no colors.
+
+`normals`: List of vertex normals (`nx ny nz` or `normal_x normal_y normal_z`). Empty if the file has no normals.
 
 
 #### parse_ply_file Function
-The parse_ply_file function takes a PLY file as input and returns a PLYObject instance. It reads the file, extracts vertex and face information, and handles color properties. If any inconsistencies or errors are detected in the PLY file, appropriate error messages are displayed.
+The parse_ply_file function takes a PLY file as input and returns a PLYObject instance. It reads the file, extracts vertices, faces, colors and normals according to the header. If the file is malformed (bad header, missing or extra data, invalid numbers, face indices out of range) it raises a `ValueError` with a readable message.
 ```
 file = "data/cube_colors.ply"
 parsed_object = parse_ply_file(file)
@@ -35,17 +37,24 @@ if parsed_object:
     print("total_colors:", len(parsed_object.colors))
 ```
 
+#### parse_ply and parse_ply_file_data
+`parse_ply(data, name=None)` parses PLY data that is already in memory (`str` for ascii files, `bytes` for any format) and returns a PLYObject.
+
+`parse_ply_file_data(lines)` takes a list of lines (or a `str` / `bytes`) and returns `[vertices, faces, colors]`.
+
 
 ### PLY File Format Support
 This parser currently supports PLY files with the following characteristics:
 
-`ASCII format`
+`ascii`, `binary_little_endian` and `binary_big_endian` formats
+
+`Any vertex layout: properties in any order, extra properties and extra elements are skipped`
 
 `Vertex coordinates (X, Y, Z)`
 
-`Face indices (triangles and quads)`
+`Face indices (polygons with any number of vertices)`
 
-`Vertex colors`
+`Vertex colors and normals`
 
 ### Testing
 ```
@@ -53,8 +62,7 @@ python3 -m unittest tests/test_ply_parser.py -v
 ```
 
 ### Limitations
-The parser assumes the input PLY file follows the standard specifications.
-It may not handle non-standard or corrupted PLY files gracefully.
+The parser follows the PLY specification and rejects files whose data does not match their header.
 
 
 ### Contribution
